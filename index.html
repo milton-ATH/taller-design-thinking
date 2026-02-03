@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taller Design Thinking - Docentes PR</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #F8FAFC; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    const TallerDesignThinking = () => {
+      const [activePhase, setActivePhase] = useState(null);
+      const [activeSection, setActiveSection] = useState('importancia');
+      const [activeTecnica, setActiveTecnica] = useState(null);
+      const [completedSteps, setCompletedSteps] = useState({});
+      const [notes, setNotes] = useState({});
+      const [studentNotes, setStudentNotes] = useState({});
+
+      const toggleStep = (phaseId, stepIndex) => {
+        const key = `${phaseId}-${stepIndex}`;
+        setCompletedSteps(prev => ({ ...prev, [key]: !prev[key] }));
+      };
+
+      const updateNote = (key, value) => {
+        setNotes(prev => ({ ...prev, [key]: value }));
+      };
+
+      const updateStudentNote = (key, value) => {
+        setStudentNotes(prev => ({ ...prev, [key]: value }));
+      };
+
+      const tecnicasAdicionales = {
+        empatizar: [
+          {
+            id: 'selfie-dibujo',
+            nombre: '🤳 Selfie y Dibujo Personal',
+            importancia: 'Antes de empatizar con otros, necesitamos conocernos a nosotros mismos. El autoconocimiento es la base de la empatía genuina. Cuando expresamos quiénes somos a través de imágenes y dibujos, abrimos canales de comunicación que las palabras solas no pueden abrir.',
+            porqueIntegrar: 'Porque muchos estudiantes (y docentes) no saben cómo presentarse más allá de datos básicos. Esta técnica rompe barreras, genera confianza rápidamente, y permite al docente conocer aspectos importantes de sus estudiantes que de otra forma tomaría meses descubrir.',
+            actividadTaller: {
+              nombre: '🤳 "Mi Selfie que Cuenta mi Historia"',
+              objetivo: 'Que los docentes experimenten el poder de la auto-presentación visual para generar conexión y empatía',
+              duracion: '25 minutos',
+              materiales: 'Celular con cámara (o papel y marcadores), hojas en blanco, marcadores de colores',
+              instrucciones: [
+                'Opción A: Toma un selfie que represente quién eres HOY como educador/a',
+                'Opción B: Dibuja un autorretrato simbólico (no realista)',
+                'Alrededor de tu imagen: 3 cosas que te apasionan, 1 reto actual, 1 sueño profesional',
+                'En grupos de 3, cada persona tiene 3 minutos para compartir',
+                'Los demás solo escuchan - sin comentarios hasta que termine',
+                'Al final: ¿Qué descubrieron que no sabían de sus colegas?'
+              ],
+              variaciones: [
+                'Virtual: Usar fondos de Zoom que representen algo personal',
+                'Grupos grandes: Galería en la pared y "recorrido de museo"',
+                'Grupos tímidos: Permitir dibujar sin mostrarse'
+              ],
+              reflexionGuia: '¿Qué aprendiste de un colega que te sorprendió?'
+            },
+            actividadEstudiantes: {
+              nombre: '🎨 "Así Soy Yo" - Autorretrato Creativo',
+              nivel: 'Elemental, Intermedio, Superior',
+              objetivo: 'Que los estudiantes se conozcan entre sí a un nivel más profundo',
+              duracion: '40 minutos',
+              materiales: 'Papel, colores, marcadores, revistas (opcional), pegamento',
+              instrucciones: [
+                'Explica: "Hoy vamos a conocernos de forma especial. No con palabras, sino con imágenes"',
+                'Cada estudiante crea su autorretrato creativo (NO tiene que ser realista)',
+                'Debe incluir: algo que aman, algo único, un sueño o meta',
+                'Pueden dibujar, hacer collage, o combinar técnicas',
+                'Galería silenciosa: Pegan todos y caminan observando sin hablar',
+                'Voluntarios comparten la historia detrás de su imagen'
+              ],
+              variaciones: [
+                'Elemental: "Mi mano mágica" - en cada dedo algo que aman',
+                'Intermedio: "Escudo personal" dividido en 4 partes',
+                'Superior: Video-selfie de 30 segundos o collage digital'
+              ],
+              conexionCurriculo: 'Arte, Español (narrativa personal), Salud (identidad)'
+            }
+          }
+        ],
+        idear: [
+          {
+            id: 'seis-sombreros',
+            nombre: '🎩 Los Seis Sombreros para Pensar',
+            importancia: 'Esta técnica de Edward de Bono separa los diferentes tipos de pensamiento. Normalmente mezclamos emociones, datos, creatividad y crítica todo a la vez. Los Seis Sombreros permiten "ponernos" un tipo de pensamiento a la vez.',
+            porqueIntegrar: 'Porque en nuestras aulas tendemos a tener "roles fijos": el pesimista, el optimista ingenuo. Esta técnica libera a todos de sus roles habituales y enseña metacognición.',
+            sombreros: [
+              { color: '⚪', nombre: 'Blanco', enfoque: 'Datos y hechos', pregunta: '¿Qué información tenemos?' },
+              { color: '🔴', nombre: 'Rojo', enfoque: 'Emociones e intuición', pregunta: '¿Qué siento al respecto?' },
+              { color: '⚫', nombre: 'Negro', enfoque: 'Crítica y riesgos', pregunta: '¿Qué podría salir mal?' },
+              { color: '🟡', nombre: 'Amarillo', enfoque: 'Optimismo y beneficios', pregunta: '¿Qué ventajas tiene?' },
+              { color: '🟢', nombre: 'Verde', enfoque: 'Creatividad', pregunta: '¿Qué más podríamos hacer?' },
+              { color: '🔵', nombre: 'Azul', enfoque: 'Control y proceso', pregunta: '¿Cómo organizamos esto?' }
+            ],
+            actividadTaller: {
+              nombre: '🎩 "Pensando con Sombreros"',
+              objetivo: 'Experimentar cómo los diferentes tipos de pensamiento generan perspectivas más ricas',
+              duracion: '35 minutos',
+              materiales: 'Tarjetas de 6 colores, timer, pizarra',
+              instrucciones: [
+                'Divídanse en grupos de 6 (o menos, rotando sombreros)',
+                'Cada persona recibe un "sombrero" (tarjeta de color)',
+                'Problema: "¿Cómo hacer las clases más interactivas con recursos limitados?"',
+                'Ronda 1: Cada persona habla SOLO desde su sombrero (2 min)',
+                'Ronda 2: Intercambien sombreros y repitan',
+                'Ronda 3: Sin sombreros - discusión libre integrando perspectivas',
+                'Reflexión: ¿Qué sombrero les costó más?'
+              ],
+              reglasDelJuego: [
+                'Con un sombrero, SOLO puedes pensar desde esa perspectiva',
+                'No hay sombreros "buenos" o "malos"',
+                'El negro NO es ser negativo - es identificar riesgos reales',
+                'El rojo permite decir "no me gusta" sin justificar'
+              ],
+              reflexionGuia: '¿Qué sombrero usas más? ¿Cuál necesitas practicar?'
+            },
+            actividadEstudiantes: {
+              nombre: '🎩 "El Consejo de los Sombreros"',
+              nivel: 'Elemental, Intermedio, Superior',
+              objetivo: 'Enseñar a pensar desde múltiples perspectivas',
+              duracion: '45 minutos',
+              materiales: 'Sombreros de papel de colores, tarjetas con roles, problema a resolver',
+              instrucciones: [
+                'Crea sombreros de papel de 6 colores (actividad previa divertida)',
+                'Presenta un problema real de la clase/escuela/comunidad',
+                'Asigna sombreros a grupos o individuos',
+                'Cada "sombrero" tiene 3 minutos para dar su perspectiva',
+                'Usa un "Guardián del sombrero azul" que organiza turnos',
+                'Al final, juntos deciden la mejor solución'
+              ],
+              variaciones: [
+                'Elemental: Solo 4 sombreros (blanco, rojo, verde, amarillo)',
+                'Intermedio: Rotar sombreros para experimentar cada perspectiva',
+                'Superior: Analizar literatura, historia, o dilemas éticos'
+              ],
+              conexionCurriculo: 'Español (argumentación), Ciencias, Estudios Sociales, Ética'
+            }
+          }
+        ]
+      };
+
+      const phases = [
+        {
+          id: 'empatizar',
+          number: '1',
+          title: '❤️ EMPATIZAR',
+          subtitle: 'Conectar con las necesidades reales',
+          color: '#E11D48',
+          lightColor: '#FFF1F2',
+          importancia: 'Sin empatía, diseñamos soluciones para problemas que imaginamos, no para los que realmente existen. En Puerto Rico, donde cada comunidad escolar tiene realidades únicas, empatizar es esencial.',
+          porqueIntegrar: 'Porque nuestros estudiantes no son números - son personas con historias, luchas y sueños. Cuando entendemos su contexto, podemos diseñar experiencias de aprendizaje que realmente funcionen.',
+          actividadTaller: {
+            nombre: '🎭 "Un Día en Sus Zapatos"',
+            objetivo: 'Experimentar la realidad de diferentes estudiantes puertorriqueños',
+            duracion: '20 minutos',
+            materiales: 'Tarjetas de perfil, papel, marcadores',
+            instrucciones: [
+              'Formen grupos de 4 personas',
+              'Cada persona toma una tarjeta con un perfil de estudiante',
+              'Durante 5 minutos, escriban cómo sería un día escolar desde esa perspectiva',
+              'Compartan en grupo: ¿Qué obstáculos enfrenta? ¿Qué necesita?',
+              'Identifiquen patrones comunes entre los perfiles'
+            ],
+            perfiles: [
+              '👧 Estudiante que trabaja en el negocio familiar',
+              '👦 Estudiante que cuida a sus hermanitos',
+              '👩 Estudiante sin internet estable en casa',
+              '👨 Estudiante con TDAH',
+              '👧 Estudiante que viaja 1 hora a la escuela'
+            ],
+            reflexionGuia: '¿Cuántas de estas realidades existen en tu salón sin que lo sepas?'
+          },
+          actividadEstudiantes: {
+            nombre: '🔍 "Detective de Necesidades"',
+            nivel: 'Elemental, Intermedio, Superior',
+            objetivo: 'Que los estudiantes practiquen empatía investigando necesidades reales',
+            duracion: '45 minutos',
+            materiales: 'Papel, lápices, post-its',
+            instrucciones: [
+              'Presenta el reto: "Vamos a mejorar algo de nuestra escuela/comunidad"',
+              'Eligen a quién entrevistar (estudiante, personal, familiar)',
+              'Usan 3 preguntas: ¿Qué te frustra? ¿Qué desearías? ¿Qué te haría más feliz?',
+              'Documentan en un "Mapa de Empatía" simple',
+              'Comparten hallazgos con la clase'
+            ],
+            variaciones: [
+              'Elemental: Dibujar las respuestas',
+              'Intermedio: Crear perfil de usuario con foto/dibujo',
+              'Superior: Entrevistas grabadas en video (1 min)'
+            ],
+            conexionCurriculo: 'Español (entrevistas), Estudios Sociales, Ciencias'
+          }
+        },
+        {
+          id: 'definir',
+          number: '2',
+          title: '🎯 DEFINIR',
+          subtitle: 'Enfocar el problema correctamente',
+          color: '#F59E0B',
+          lightColor: '#FFFBEB',
+          importancia: 'Si defines mal el problema, todas tus soluciones irán en la dirección equivocada. Es como medicar síntomas sin diagnosticar la enfermedad.',
+          porqueIntegrar: 'Porque muchas veces tratamos síntomas ("no prestan atención") sin entender causas ("las clases no conectan con sus intereses").',
+          actividadTaller: {
+            nombre: '🔎 "Los 5 Por Qués en Acción"',
+            objetivo: 'Practicar la técnica para llegar a la raíz de los problemas',
+            duracion: '25 minutos',
+            materiales: 'Papel grande o pizarra, marcadores',
+            instrucciones: [
+              'En parejas, uno elige un problema real de su aula',
+              'El compañero pregunta "¿Por qué?" - el otro responde',
+              'Repiten "¿Por qué?" ante cada respuesta (5 veces)',
+              'Documentan la cadena de respuestas',
+              'Identifican: ¿Cuál es la causa raíz? ¿Qué pueden controlar?',
+              'Intercambian roles y repiten'
+            ],
+            reflexionGuia: '¿Qué "verdades" sobre tus estudiantes has asumido sin verificar?'
+          },
+          actividadEstudiantes: {
+            nombre: '🎯 "De Queja a Misión"',
+            nivel: 'Elemental, Intermedio, Superior',
+            objetivo: 'Enseñar a convertir quejas en oportunidades de mejora',
+            duracion: '30 minutos',
+            materiales: 'Post-its (2 colores), papel grande',
+            instrucciones: [
+              'En post-its ROJOS, escriben 3 quejas sobre la escuela/clase',
+              'Pegan todos los post-its en la pizarra',
+              'En grupos, agrupan quejas similares',
+              'Por cada grupo escriben en VERDE: "¿Cómo podríamos...?"',
+              'Votan cuál problema quieren resolver'
+            ],
+            variaciones: [
+              'Elemental: Usar dibujos',
+              'Intermedio: Escribir el "¿Cómo podríamos...?" como grupo',
+              'Superior: Añadir criterios de priorización'
+            ],
+            conexionCurriculo: 'Español (redacción), Ciudadanía, Servicio Comunitario'
+          }
+        },
+        {
+          id: 'idear',
+          number: '3',
+          title: '💡 IDEAR',
+          subtitle: 'Generar soluciones creativas',
+          color: '#10B981',
+          lightColor: '#ECFDF5',
+          importancia: 'La primera idea casi nunca es la mejor. Idear nos fuerza a generar muchas opciones antes de enamorarnos de una sola.',
+          porqueIntegrar: 'Porque tendemos a quedarnos con la primera solución. Necesitamos personas que generen múltiples alternativas.',
+          actividadTaller: {
+            nombre: '🧠 "Tormenta Loca + SCAMPER"',
+            objetivo: 'Generar al menos 20 ideas sin juzgarlas',
+            duracion: '30 minutos',
+            materiales: 'Muchos post-its, marcadores gruesos, timer',
+            instrucciones: [
+              'REGLAS: No juzgar, cantidad sobre calidad, ideas locas bienvenidas',
+              'Fase 1 (8 min): Tormenta libre - una idea por post-it',
+              'Fase 2 (10 min): Aplicar SCAMPER a las mejores ideas',
+              'Fase 3 (7 min): Votar las 3 más prometedoras',
+              'Fase 4 (5 min): Refinar la idea ganadora'
+            ],
+            reflexionGuia: '¿Cuál de las ideas "locas" tiene un grano de genialidad?'
+          },
+          actividadEstudiantes: {
+            nombre: '💡 "100 Ideas en 10 Minutos"',
+            nivel: 'Elemental, Intermedio, Superior',
+            objetivo: 'Entrenar el músculo creativo generando muchas ideas rápidamente',
+            duracion: '25 minutos',
+            materiales: 'Papel, lápices, timer visible, música (opcional)',
+            instrucciones: [
+              'Presenta el reto/problema definido',
+              'Reglas: TODA idea vale, no criticar, pueden dibujar',
+              'Timer de 10 minutos - ¡100 ideas entre todos!',
+              'Cada idea en un papelito separado',
+              'Pegan todas en la pared y buscan las más creativas',
+              'Votan las favoritas'
+            ],
+            variaciones: [
+              'Elemental: Meta de 30 ideas, pueden ser dibujos',
+              'Intermedio: Añadir categorías',
+              'Superior: Incluir análisis de viabilidad'
+            ],
+            conexionCurriculo: 'Cualquier materia - adaptar el reto'
+          }
+        },
+        {
+          id: 'prototipar',
+          number: '4',
+          title: '🔧 PROTOTIPAR',
+          subtitle: 'Hacer tangibles las ideas',
+          color: '#8B5CF6',
+          lightColor: '#F5F3FF',
+          importancia: 'Las ideas en la cabeza parecen perfectas. Al construirlas, descubrimos problemas. Es más barato fallar con cartón que con recursos reales.',
+          porqueIntegrar: 'Porque enseñamos en abstracto demasiado tiempo. Cuando los estudiantes CONSTRUYEN, el aprendizaje es memorable.',
+          actividadTaller: {
+            nombre: '🏗️ "Prototipo en 15 Minutos"',
+            objetivo: 'Crear una versión tangible de la solución',
+            duracion: '25 minutos',
+            materiales: 'Cartulina, papel, tijeras, pegamento, marcadores, materiales reciclados',
+            instrucciones: [
+              'Elige la idea ganadora',
+              'Decide tipo: Storyboard, Maqueta, Role-play, o Pantallas de papel',
+              'Timer de 15 minutos - ¡construir sin perfeccionar!',
+              'Mantra: "Si no te da vergüenza, esperaste mucho"',
+              'Prepara explicación de 1 minuto'
+            ],
+            reflexionGuia: '¿Qué descubriste al construir que no habías pensado?'
+          },
+          actividadEstudiantes: {
+            nombre: '🎨 "Construye tu Solución"',
+            nivel: 'Elemental, Intermedio, Superior',
+            objetivo: 'Materializar ideas en prototipos tangibles',
+            duracion: '45 minutos',
+            materiales: 'Cartón, papel, tijeras, pegamento, colores, materiales reciclados',
+            instrucciones: [
+              'Recuerda: Un prototipo NO es el producto final',
+              'Cada grupo elige cómo representar su idea',
+              'Tienen 30 minutos para construir',
+              'Los últimos 15 minutos: preparar explicación',
+              'Criterio: ¿Se entiende la idea al verlo?'
+            ],
+            variaciones: [
+              'Elemental: Dibujo grande, maqueta con plastilina',
+              'Intermedio: Storyboard, maqueta con cartón',
+              'Superior: Prototipo de app en papel, pitch'
+            ],
+            conexionCurriculo: 'Arte, Ciencias, Tecnología, Matemáticas'
+          }
+        },
+        {
+          id: 'probar',
+          number: '5',
+          title: '✅ PROBAR',
+          subtitle: 'Aprender de la retroalimentación',
+          color: '#0EA5E9',
+          lightColor: '#F0F9FF',
+          importancia: 'La única forma de saber si algo funciona es probándolo con usuarios reales. La retroalimentación es información invaluable.',
+          porqueIntegrar: 'Porque enseñamos a temer al error. Design Thinking reencuadra el "fracaso" como aprendizaje.',
+          actividadTaller: {
+            nombre: '🔄 "Speed Testing entre Colegas"',
+            objetivo: 'Obtener retroalimentación rápida de múltiples personas',
+            duracion: '25 minutos',
+            materiales: 'Prototipos creados, hojas para notas, timer',
+            instrucciones: [
+              'Formen dos filas, uno frente a otro',
+              'Fila A presenta (2 min), Fila B da feedback (2 min)',
+              'Técnica: "Me gusta... / Deseo... / ¿Y si...?"',
+              'Rotar: Fila B se mueve un puesto',
+              'Repetir 3-4 veces',
+              'Documentar patrones en el feedback'
+            ],
+            reflexionGuia: '¿Qué patrón de feedback se repitió? ¿Qué cambiarás?'
+          },
+          actividadEstudiantes: {
+            nombre: '🎤 "Feria de Prototipos"',
+            nivel: 'Elemental, Intermedio, Superior',
+            objetivo: 'Presentar soluciones y recibir retroalimentación real',
+            duracion: '45-60 minutos',
+            materiales: 'Prototipos, mesas, hojas de feedback, stickers',
+            instrucciones: [
+              'Montar estaciones con cada prototipo',
+              'Mitad presenta, mitad visita (luego rotan)',
+              'Visitantes dejan feedback escrito',
+              'Pueden invitar a otros grupos, maestros, familias',
+              'Cada grupo planifica UNA mejora'
+            ],
+            variaciones: [
+              'Elemental: Feedback con caritas (😊🤔⭐)',
+              'Intermedio: Votación con stickers',
+              'Superior: Preguntas tipo "Shark Tank"'
+            ],
+            conexionCurriculo: 'Español (presentación oral), Ciencias, Estudios Sociales'
+          }
+        }
+      ];
+
+      const styles = {
+        container: { fontFamily: 'system-ui, -apple-system, sans-serif', maxWidth: '950px', margin: '0 auto', padding: '16px', backgroundColor: '#F8FAFC', minHeight: '100vh' },
+        header: { background: 'linear-gradient(135deg, #1E40AF 0%, #7C3AED 50%, #DB2777 100%)', color: 'white', borderRadius: '20px', padding: '28px', marginBottom: '24px', textAlign: 'center', boxShadow: '0 10px 40px rgba(124, 58, 237, 0.3)' },
+        phaseNav: { display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap', margin: '20px 0' },
+        phaseNavBtn: { padding: '8px 16px', borderRadius: '20px', border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', transition: 'all 0.2s' },
+        section: { marginBottom: '20px' },
+        sectionButton: { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px', background: 'linear-gradient(135deg, #2563EB, #4F46E5)', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '17px', fontWeight: 'bold', boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)' },
+        sectionContent: { marginTop: '12px', padding: '24px', backgroundColor: 'white', borderRadius: '12px', border: '1px solid #E5E7EB' },
+        importanceBox: { background: 'linear-gradient(135deg, #FEF3C7, #FDE68A)', padding: '20px', borderRadius: '12px', marginBottom: '16px', borderLeft: '5px solid #F59E0B' },
+        whyBox: { background: 'linear-gradient(135deg, #D1FAE5, #A7F3D0)', padding: '20px', borderRadius: '12px', marginBottom: '16px', borderLeft: '5px solid #10B981' },
+        activityBox: { backgroundColor: 'white', padding: '20px', borderRadius: '12px', marginBottom: '16px', border: '2px solid', boxShadow: '0 4px 15px rgba(0,0,0,0.08)' },
+        checkbox: { width: '20px', height: '20px', marginRight: '12px', cursor: 'pointer', accentColor: '#10B981' },
+        textarea: { width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #E2E8F0', fontSize: '14px', resize: 'vertical', minHeight: '80px', fontFamily: 'inherit', boxSizing: 'border-box' },
+        stepItem: { display: 'flex', alignItems: 'flex-start', padding: '10px', borderRadius: '8px', marginBottom: '8px', backgroundColor: '#F8FAFC', cursor: 'pointer' },
+        tag: { display: 'inline-block', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', marginRight: '8px' },
+        tecnicaBtn: { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', backgroundColor: '#FDF4FF', border: '2px solid #E879F9', borderRadius: '12px', cursor: 'pointer', marginBottom: '12px' }
+      };
+
+      const renderTecnicaAdicional = (tecnica) => (
+        <div key={tecnica.id} style={{ marginTop: '24px', borderTop: '3px dashed #E879F9', paddingTop: '24px' }}>
+          <button onClick={() => setActiveTecnica(activeTecnica === tecnica.id ? null : tecnica.id)} style={styles.tecnicaBtn}>
+            <div>
+              <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#A21CAF' }}>{tecnica.nombre}</span>
+              <span style={{ ...styles.tag, backgroundColor: '#F3E8FF', color: '#7C3AED', marginLeft: '12px' }}>✨ TÉCNICA ADICIONAL</span>
+            </div>
+            <span style={{ fontSize: '20px', color: '#A21CAF' }}>{activeTecnica === tecnica.id ? '▲' : '▼'}</span>
+          </button>
+
+          {activeTecnica === tecnica.id && (
+            <div style={{ backgroundColor: '#FEFBFF', padding: '20px', borderRadius: '12px', border: '1px solid #F3E8FF' }}>
+              <div style={styles.importanceBox}>
+                <h3 style={{ color: '#92400E', marginBottom: '10px' }}>🌟 ¿Por qué es IMPORTANTE?</h3>
+                <p style={{ color: '#78350F', lineHeight: '1.7' }}>{tecnica.importancia}</p>
+              </div>
+
+              <div style={styles.whyBox}>
+                <h3 style={{ color: '#065F46', marginBottom: '10px' }}>💡 ¿Por qué DEBES integrarla?</h3>
+                <p style={{ color: '#047857', lineHeight: '1.7' }}>{tecnica.porqueIntegrar}</p>
+              </div>
+
+              {tecnica.sombreros && (
+                <div style={{ backgroundColor: '#F8FAFC', padding: '20px', borderRadius: '12px', marginBottom: '16px' }}>
+                  <h4 style={{ color: '#1F2937', marginBottom: '16px', fontSize: '18px' }}>🎩 Los Seis Sombreros:</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px' }}>
+                    {tecnica.sombreros.map((s, i) => (
+                      <div key={i} style={{ backgroundColor: 'white', padding: '14px', borderRadius: '10px', border: '2px solid #E5E7EB' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '24px' }}>{s.color}</span>
+                          <span style={{ fontWeight: 'bold', color: '#1F2937' }}>{s.nombre}</span>
+                        </div>
+                        <p style={{ color: '#4B5563', fontSize: '14px', marginBottom: '4px' }}><strong>Enfoque:</strong> {s.enfoque}</p>
+                        <p style={{ color: '#6B7280', fontSize: '13px' }}>{s.pregunta}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ ...styles.activityBox, borderColor: '#A21CAF' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                  <span style={{ ...styles.tag, backgroundColor: '#A21CAF', color: 'white' }}>👨‍🏫 ACTIVIDAD TALLER</span>
+                  <span style={{ ...styles.tag, backgroundColor: '#F3E8FF', color: '#7C3AED' }}>⏱️ {tecnica.actividadTaller.duracion}</span>
+                </div>
+                <h3 style={{ color: '#A21CAF', marginBottom: '8px', fontSize: '20px' }}>{tecnica.actividadTaller.nombre}</h3>
+                <p style={{ color: '#4B5563', marginBottom: '16px' }}><strong>Objetivo:</strong> {tecnica.actividadTaller.objetivo}</p>
+                <p style={{ color: '#6B7280', marginBottom: '16px', fontSize: '14px' }}>📦 <strong>Materiales:</strong> {tecnica.actividadTaller.materiales}</p>
+
+                <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '10px', marginBottom: '16px', border: '1px solid #F3E8FF' }}>
+                  <h4 style={{ color: '#1F2937', marginBottom: '12px' }}>📋 Instrucciones:</h4>
+                  {tecnica.actividadTaller.instrucciones.map((step, idx) => (
+                    <div key={idx} onClick={() => toggleStep(`taller-${tecnica.id}`, idx)} style={{ ...styles.stepItem, backgroundColor: completedSteps[`taller-${tecnica.id}-${idx}`] ? '#F3E8FF' : '#F9FAFB', textDecoration: completedSteps[`taller-${tecnica.id}-${idx}`] ? 'line-through' : 'none' }}>
+                      <input type="checkbox" checked={completedSteps[`taller-${tecnica.id}-${idx}`] || false} onChange={() => {}} style={{ ...styles.checkbox, accentColor: '#A21CAF' }} />
+                      <span>{idx + 1}. {step}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {tecnica.actividadTaller.variaciones && (
+                  <div style={{ backgroundColor: '#FEF3C7', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
+                    <h4 style={{ color: '#92400E', marginBottom: '10px' }}>🎚️ Variaciones:</h4>
+                    {tecnica.actividadTaller.variaciones.map((v, i) => (<p key={i} style={{ color: '#78350F', marginBottom: '6px', fontSize: '14px' }}>• {v}</p>))}
+                  </div>
+                )}
+
+                {tecnica.actividadTaller.reglasDelJuego && (
+                  <div style={{ backgroundColor: '#DBEAFE', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
+                    <h4 style={{ color: '#1E40AF', marginBottom: '10px' }}>📜 Reglas:</h4>
+                    {tecnica.actividadTaller.reglasDelJuego.map((r, i) => (<p key={i} style={{ color: '#1E3A8A', marginBottom: '6px', fontSize: '14px' }}>✓ {r}</p>))}
+                  </div>
+                )}
+
+                <div style={{ backgroundColor: '#FEF9C3', padding: '16px', borderRadius: '10px', borderLeft: '4px solid #F59E0B' }}>
+                  <h4 style={{ color: '#92400E', marginBottom: '8px' }}>💭 Reflexión:</h4>
+                  <p style={{ color: '#78350F', fontStyle: 'italic' }}>{tecnica.actividadTaller.reflexionGuia}</p>
+                </div>
+
+                <div style={{ marginTop: '16px' }}>
+                  <h4 style={{ color: '#374151', marginBottom: '8px' }}>📝 Mis notas:</h4>
+                  <textarea style={{ ...styles.textarea, borderColor: '#F3E8FF' }} placeholder="Escribe aquí..." value={notes[`taller-${tecnica.id}`] || ''} onChange={(e) => updateNote(`taller-${tecnica.id}`, e.target.value)} />
+                </div>
+              </div>
+
+              <div style={{ ...styles.activityBox, borderColor: '#3B82F6', background: 'linear-gradient(to bottom, #EFF6FF, white)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                  <span style={{ ...styles.tag, backgroundColor: '#3B82F6', color: 'white' }}>👨‍🎓 ACTIVIDAD ESTUDIANTES</span>
+                  <span style={{ ...styles.tag, backgroundColor: '#DBEAFE', color: '#1E40AF' }}>⏱️ {tecnica.actividadEstudiantes.duracion}</span>
+                  <span style={{ ...styles.tag, backgroundColor: '#FEE2E2', color: '#991B1B' }}>📊 {tecnica.actividadEstudiantes.nivel}</span>
+                </div>
+                <h3 style={{ color: '#1E40AF', marginBottom: '8px', fontSize: '20px' }}>{tecnica.actividadEstudiantes.nombre}</h3>
+                <p style={{ color: '#4B5563', marginBottom: '16px' }}><strong>Objetivo:</strong> {tecnica.actividadEstudiantes.objetivo}</p>
+                <p style={{ color: '#6B7280', marginBottom: '16px', fontSize: '14px' }}>📦 <strong>Materiales:</strong> {tecnica.actividadEstudiantes.materiales}</p>
+
+                <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '10px', marginBottom: '16px', border: '1px solid #BFDBFE' }}>
+                  <h4 style={{ color: '#1F2937', marginBottom: '12px' }}>📋 Instrucciones:</h4>
+                  {tecnica.actividadEstudiantes.instrucciones.map((step, idx) => (
+                    <div key={idx} onClick={() => toggleStep(`estudiantes-${tecnica.id}`, idx)} style={{ ...styles.stepItem, backgroundColor: completedSteps[`estudiantes-${tecnica.id}-${idx}`] ? '#DBEAFE' : '#F9FAFB' }}>
+                      <input type="checkbox" checked={completedSteps[`estudiantes-${tecnica.id}-${idx}`] || false} onChange={() => {}} style={{ ...styles.checkbox, accentColor: '#3B82F6' }} />
+                      <span>{idx + 1}. {step}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {tecnica.actividadEstudiantes.variaciones && (
+                  <div style={{ backgroundColor: '#FEF3C7', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
+                    <h4 style={{ color: '#92400E', marginBottom: '10px' }}>🎚️ Adaptaciones:</h4>
+                    {tecnica.actividadEstudiantes.variaciones.map((v, i) => (<p key={i} style={{ color: '#78350F', marginBottom: '6px', fontSize: '14px' }}>• {v}</p>))}
+                  </div>
+                )}
+
+                <div style={{ backgroundColor: '#E0E7FF', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
+                  <h4 style={{ color: '#3730A3', marginBottom: '8px' }}>📚 Conexión Curricular:</h4>
+                  <p style={{ color: '#4338CA' }}>{tecnica.actividadEstudiantes.conexionCurriculo}</p>
+                </div>
+
+                <div style={{ marginTop: '16px' }}>
+                  <h4 style={{ color: '#374151', marginBottom: '8px' }}>📝 Mi plan:</h4>
+                  <textarea style={{ ...styles.textarea, borderColor: '#BFDBFE' }} placeholder="¿Cuándo la usarás?" value={studentNotes[`estudiantes-${tecnica.id}`] || ''} onChange={(e) => updateStudentNote(`estudiantes-${tecnica.id}`, e.target.value)} />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      return (
+        <div style={styles.container}>
+          <div style={styles.header}>
+            <div style={{ fontSize: '36px', marginBottom: '12px' }}>❤️ 🎯 💡 🔧 ✅</div>
+            <h1 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '8px' }}>Integrando Design Thinking al Quehacer Pedagógico</h1>
+            <p style={{ fontSize: '18px', opacity: '0.95', marginBottom: '4px' }}>Innovación Práctica en el Aula Puertorriqueña 🇵🇷</p>
+            <p style={{ fontSize: '14px', opacity: '0.85' }}>Taller Interactivo | 4-5 horas</p>
+            <div style={styles.phaseNav}>
+              {phases.map((p) => (
+                <button key={p.id} onClick={() => { setActivePhase(p.id); setActiveSection(null); setActiveTecnica(null); }} style={{ ...styles.phaseNavBtn, backgroundColor: activePhase === p.id ? 'white' : 'rgba(255,255,255,0.2)', color: activePhase === p.id ? p.color : 'white' }}>{p.title}</button>
+              ))}
+            </div>
+          </div>
+
+          <div style={styles.section}>
+            <button style={styles.sectionButton} onClick={() => setActiveSection(activeSection === 'importancia' ? null : 'importancia')}>
+              <span>🌟 ¿Por Qué Design Thinking en Educación?</span>
+              <span>{activeSection === 'importancia' ? '▲' : '▼'}</span>
+            </button>
+            {activeSection === 'importancia' && (
+              <div style={styles.sectionContent}>
+                <div style={styles.importanceBox}>
+                  <h3 style={{ color: '#92400E', marginBottom: '12px' }}>🎯 ¿Qué es Design Thinking?</h3>
+                  <p style={{ color: '#78350F', lineHeight: '1.6' }}>Es una <strong>metodología creativa para resolver problemas</strong> centrada en las personas. En vez de asumir qué necesitan, lo investigamos. En vez de la primera idea, generamos muchas. En vez de algo "perfecto", probamos y mejoramos.</p>
+                </div>
+                <div style={styles.whyBox}>
+                  <h3 style={{ color: '#065F46', marginBottom: '12px' }}>💪 ¿Por Qué es IMPORTANTE?</h3>
+                  <ul style={{ color: '#047857', lineHeight: '1.8', marginLeft: '20px' }}>
+                    <li><strong>Resuelve problemas reales:</strong> Soluciones prácticas para tu aula</li>
+                    <li><strong>Centrado en el estudiante:</strong> Diseñas PARA ellos</li>
+                    <li><strong>Fomenta creatividad:</strong> Rompe el "siempre se ha hecho así"</li>
+                    <li><strong>Acepta el error:</strong> Fallar rápido = aprender rápido</li>
+                    <li><strong>Usa lo que tienes:</strong> No requiere presupuesto grande</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {phases.map((phase) => (
+            <div key={phase.id} style={styles.section}>
+              <button onClick={() => { setActivePhase(activePhase === phase.id ? null : phase.id); setActiveSection(null); setActiveTecnica(null); }} style={{ ...styles.sectionButton, background: `linear-gradient(135deg, ${phase.color}, ${phase.color}dd)` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ width: '44px', height: '44px', backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '22px' }}>{phase.number}</span>
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ fontSize: '18px' }}>{phase.title}</div>
+                    <div style={{ fontSize: '14px', opacity: '0.9', fontWeight: 'normal' }}>{phase.subtitle}</div>
+                  </div>
+                </div>
+                <span>{activePhase === phase.id ? '▲' : '▼'}</span>
+              </button>
+
+              {activePhase === phase.id && (
+                <div style={{ ...styles.sectionContent, backgroundColor: phase.lightColor, borderColor: phase.color, borderWidth: '2px' }}>
+                  <div style={styles.importanceBox}>
+                    <h3 style={{ color: '#92400E', marginBottom: '10px' }}>🌟 ¿Por qué es IMPORTANTE?</h3>
+                    <p style={{ color: '#78350F', lineHeight: '1.6' }}>{phase.importancia}</p>
+                  </div>
+
+                  <div style={styles.whyBox}>
+                    <h3 style={{ color: '#065F46', marginBottom: '10px' }}>💡 ¿Por qué DEBES integrarla?</h3>
+                    <p style={{ color: '#047857', lineHeight: '1.6' }}>{phase.porqueIntegrar}</p>
+                  </div>
+
+                  <div style={{ ...styles.activityBox, borderColor: phase.color }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                      <span style={{ ...styles.tag, backgroundColor: phase.color, color: 'white' }}>👨‍🏫 ACTIVIDAD TALLER</span>
+                      <span style={{ ...styles.tag, backgroundColor: '#E0E7FF', color: '#3730A3' }}>⏱️ {phase.actividadTaller.duracion}</span>
+                    </div>
+                    <h3 style={{ color: phase.color, marginBottom: '8px', fontSize: '20px' }}>{phase.actividadTaller.nombre}</h3>
+                    <p style={{ color: '#4B5563', marginBottom: '16px' }}><strong>Objetivo:</strong> {phase.actividadTaller.objetivo}</p>
+                    <p style={{ color: '#6B7280', marginBottom: '16px', fontSize: '14px' }}>📦 <strong>Materiales:</strong> {phase.actividadTaller.materiales}</p>
+
+                    <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
+                      <h4 style={{ color: '#1F2937', marginBottom: '12px' }}>📋 Instrucciones:</h4>
+                      {phase.actividadTaller.instrucciones.map((step, idx) => (
+                        <div key={idx} onClick={() => toggleStep(`taller-${phase.id}`, idx)} style={{ ...styles.stepItem, backgroundColor: completedSteps[`taller-${phase.id}-${idx}`] ? '#D1FAE5' : '#F9FAFB', textDecoration: completedSteps[`taller-${phase.id}-${idx}`] ? 'line-through' : 'none' }}>
+                          <input type="checkbox" checked={completedSteps[`taller-${phase.id}-${idx}`] || false} onChange={() => {}} style={styles.checkbox} />
+                          <span style={{ color: completedSteps[`taller-${phase.id}-${idx}`] ? '#6B7280' : '#1F2937' }}>{idx + 1}. {step}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {phase.actividadTaller.perfiles && (
+                      <div style={{ backgroundColor: '#FEF3C7', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
+                        <h4 style={{ color: '#92400E', marginBottom: '10px' }}>🎭 Perfiles:</h4>
+                        {phase.actividadTaller.perfiles.map((p, i) => (<p key={i} style={{ color: '#78350F', marginBottom: '6px', fontSize: '14px' }}>{p}</p>))}
+                      </div>
+                    )}
+
+                    <div style={{ backgroundColor: '#FEF9C3', padding: '16px', borderRadius: '10px', borderLeft: '4px solid #F59E0B' }}>
+                      <h4 style={{ color: '#92400E', marginBottom: '8px' }}>💭 Reflexión:</h4>
+                      <p style={{ color: '#78350F', fontStyle: 'italic' }}>{phase.actividadTaller.reflexionGuia}</p>
+                    </div>
+
+                    <div style={{ marginTop: '16px' }}>
+                      <h4 style={{ color: '#374151', marginBottom: '8px' }}>📝 Mis notas:</h4>
+                      <textarea style={styles.textarea} placeholder="Escribe aquí..." value={notes[`taller-${phase.id}`] || ''} onChange={(e) => updateNote(`taller-${phase.id}`, e.target.value)} />
+                    </div>
+                  </div>
+
+                  <div style={{ ...styles.activityBox, borderColor: '#3B82F6', background: 'linear-gradient(to bottom, #EFF6FF, white)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                      <span style={{ ...styles.tag, backgroundColor: '#3B82F6', color: 'white' }}>👨‍🎓 ACTIVIDAD ESTUDIANTES</span>
+                      <span style={{ ...styles.tag, backgroundColor: '#DBEAFE', color: '#1E40AF' }}>⏱️ {phase.actividadEstudiantes.duracion}</span>
+                      <span style={{ ...styles.tag, backgroundColor: '#FEE2E2', color: '#991B1B' }}>📊 {phase.actividadEstudiantes.nivel}</span>
+                    </div>
+                    <h3 style={{ color: '#1E40AF', marginBottom: '8px', fontSize: '20px' }}>{phase.actividadEstudiantes.nombre}</h3>
+                    <p style={{ color: '#4B5563', marginBottom: '16px' }}><strong>Objetivo:</strong> {phase.actividadEstudiantes.objetivo}</p>
+                    <p style={{ color: '#6B7280', marginBottom: '16px', fontSize: '14px' }}>📦 <strong>Materiales:</strong> {phase.actividadEstudiantes.materiales}</p>
+
+                    <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '10px', marginBottom: '16px', border: '1px solid #BFDBFE' }}>
+                      <h4 style={{ color: '#1F2937', marginBottom: '12px' }}>📋 Instrucciones:</h4>
+                      {phase.actividadEstudiantes.instrucciones.map((step, idx) => (
+                        <div key={idx} onClick={() => toggleStep(`estudiantes-${phase.id}`, idx)} style={{ ...styles.stepItem, backgroundColor: completedSteps[`estudiantes-${phase.id}-${idx}`] ? '#DBEAFE' : '#F9FAFB' }}>
+                          <input type="checkbox" checked={completedSteps[`estudiantes-${phase.id}-${idx}`] || false} onChange={() => {}} style={{ ...styles.checkbox, accentColor: '#3B82F6' }} />
+                          <span>{idx + 1}. {step}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {phase.actividadEstudiantes.variaciones && (
+                      <div style={{ backgroundColor: '#FEF3C7', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
+                        <h4 style={{ color: '#92400E', marginBottom: '10px' }}>🎚️ Adaptaciones:</h4>
+                        {phase.actividadEstudiantes.variaciones.map((v, i) => (<p key={i} style={{ color: '#78350F', marginBottom: '6px', fontSize: '14px' }}>• {v}</p>))}
+                      </div>
+                    )}
+
+                    <div style={{ backgroundColor: '#E0E7FF', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
+                      <h4 style={{ color: '#3730A3', marginBottom: '8px' }}>📚 Conexión Curricular:</h4>
+                      <p style={{ color: '#4338CA' }}>{phase.actividadEstudiantes.conexionCurriculo}</p>
+                    </div>
+
+                    <div style={{ marginTop: '16px' }}>
+                      <h4 style={{ color: '#374151', marginBottom: '8px' }}>📝 Mi plan:</h4>
+                      <textarea style={{ ...styles.textarea, borderColor: '#BFDBFE' }} placeholder="¿Cuándo la usarás?" value={studentNotes[`estudiantes-${phase.id}`] || ''} onChange={(e) => updateStudentNote(`estudiantes-${phase.id}`, e.target.value)} />
+                    </div>
+                  </div>
+
+                  {tecnicasAdicionales[phase.id] && tecnicasAdicionales[phase.id].map(tecnica => renderTecnicaAdicional(tecnica))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          <div style={{ textAlign: 'center', padding: '28px', backgroundColor: 'white', borderRadius: '16px', marginTop: '24px' }}>
+            <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#4338CA', marginBottom: '8px' }}>"La innovación educativa no requiere grandes presupuestos,</p>
+            <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#7C3AED', marginBottom: '16px' }}>requiere grandes corazones dispuestos a intentar algo nuevo."</p>
+            <p style={{ color: '#6B7280' }}>🇵🇷 ¡Éxito en tu camino de innovación pedagógica!</p>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<TallerDesignThinking />, document.getElementById('root'));
+  </script>
+</body>
+</html>
